@@ -1,0 +1,28 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+twine = "*"
+numpy = "*"
+pandas = "*"
+scikit-learn = "*"
+black = "*"
+coverage = "*"
+flake8 = "*"
+pytest = "*"
+yapf = "*"
+gcsfs = "*"
+google-cloud-storage = "*"
+mlflow = "*"
+s3fs = "*"
+six = ">=1.14"
+joblib = "*"
+memoized-property = "*"
+termcolor = "*"
+
+[dev-packages]
+
+[requires]
+python_version = "3.8"
