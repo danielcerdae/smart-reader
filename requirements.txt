@@ -22,6 +22,10 @@ gcsfs
 google-cloud-storage
 mlflow
 s3fs
+fastapi
+pytz
+uvicorn
+httpx
 
 # utilities
 six>=1.14
