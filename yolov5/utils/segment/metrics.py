@@ -15,6 +15,16 @@ def fitness(x):
 
 
 def ap_per_class_box_and_mask(
+<<<<<<< HEAD
+    tp_m,
+    tp_b,
+    conf,
+    pred_cls,
+    target_cls,
+    plot=False,
+    save_dir=".",
+    names=(),
+=======
         tp_m,
         tp_b,
         conf,
@@ -23,6 +33,7 @@ def ap_per_class_box_and_mask(
         plot=False,
         save_dir=".",
         names=(),
+>>>>>>> 60ea1aff57f74d50644b9c9aa6008616af5496e1
 ):
     """
     Args:
@@ -30,6 +41,28 @@ def ap_per_class_box_and_mask(
         tp_m: tp of masks.
         other arguments see `func: ap_per_class`.
     """
+<<<<<<< HEAD
+    results_boxes = ap_per_class(
+        tp_b,
+        conf,
+        pred_cls,
+        target_cls,
+        plot=plot,
+        save_dir=save_dir,
+        names=names,
+        prefix="Box",
+    )[2:]
+    results_masks = ap_per_class(
+        tp_m,
+        conf,
+        pred_cls,
+        target_cls,
+        plot=plot,
+        save_dir=save_dir,
+        names=names,
+        prefix="Mask",
+    )[2:]
+=======
     results_boxes = ap_per_class(tp_b,
                                  conf,
                                  pred_cls,
@@ -46,6 +79,7 @@ def ap_per_class_box_and_mask(
                                  save_dir=save_dir,
                                  names=names,
                                  prefix="Mask")[2:]
+>>>>>>> 60ea1aff57f74d50644b9c9aa6008616af5496e1
 
     results = {
         "boxes": {
@@ -53,18 +87,32 @@ def ap_per_class_box_and_mask(
             "r": results_boxes[1],
             "ap": results_boxes[3],
             "f1": results_boxes[2],
+<<<<<<< HEAD
+            "ap_class": results_boxes[4],
+        },
+=======
             "ap_class": results_boxes[4]},
+>>>>>>> 60ea1aff57f74d50644b9c9aa6008616af5496e1
         "masks": {
             "p": results_masks[0],
             "r": results_masks[1],
             "ap": results_masks[3],
             "f1": results_masks[2],
+<<<<<<< HEAD
+            "ap_class": results_masks[4],
+        },
+    }
+=======
             "ap_class": results_masks[4]}}
+>>>>>>> 60ea1aff57f74d50644b9c9aa6008616af5496e1
     return results
 
 
 class Metric:
+<<<<<<< HEAD
+=======
 
+>>>>>>> 60ea1aff57f74d50644b9c9aa6008616af5496e1
     def __init__(self) -> None:
         self.p = []  # (nc, )
         self.r = []  # (nc, )
@@ -196,7 +244,12 @@ KEYS = [
     "val/cls_loss",
     "x/lr0",
     "x/lr1",
+<<<<<<< HEAD
+    "x/lr2",
+]
+=======
     "x/lr2",]
+>>>>>>> 60ea1aff57f74d50644b9c9aa6008616af5496e1
 
 BEST_KEYS = [
     "best/epoch",
@@ -207,4 +260,9 @@ BEST_KEYS = [
     "best/precision(M)",
     "best/recall(M)",
     "best/mAP_0.5(M)",
+<<<<<<< HEAD
+    "best/mAP_0.5:0.95(M)",
+]
+=======
     "best/mAP_0.5:0.95(M)",]
+>>>>>>> 60ea1aff57f74d50644b9c9aa6008616af5496e1

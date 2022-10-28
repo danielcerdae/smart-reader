@@ -22,7 +22,15 @@ def sweep():
     # Workaround: get necessary opt args
     opt = parse_opt(known=True)
     opt.batch_size = hyp_dict.get("batch_size")
+<<<<<<< HEAD
+    opt.save_dir = str(
+        increment_path(
+            Path(opt.project) / opt.name, exist_ok=opt.exist_ok or opt.evolve
+        )
+    )
+=======
     opt.save_dir = str(increment_path(Path(opt.project) / opt.name, exist_ok=opt.exist_ok or opt.evolve))
+>>>>>>> 60ea1aff57f74d50644b9c9aa6008616af5496e1
     opt.epochs = hyp_dict.get("epochs")
     opt.nosave = True
     opt.data = hyp_dict.get("data")
