@@ -32,15 +32,20 @@ def predict(model):
         im = Image.open(io.BytesIO(im_bytes))
 
         if model in models:
+<<<<<<< HEAD
             results = models[model](
                 im, size=640
             )  # reduce size=320 for faster inference
+=======
+            results = models[model](im, size=640)  # reduce size=320 for faster inference
+>>>>>>> 60ea1aff57f74d50644b9c9aa6008616af5496e1
             return results.pandas().xyxy[0].to_json(orient="records")
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Flask API exposing YOLOv5 model")
     parser.add_argument("--port", default=5000, type=int, help="port number")
+<<<<<<< HEAD
     parser.add_argument(
         "--model",
         nargs="+",
@@ -53,5 +58,12 @@ if __name__ == "__main__":
         models[m] = torch.hub.load(
             "ultralytics/yolov5", m, force_reload=True, skip_validation=True
         )
+=======
+    parser.add_argument('--model', nargs='+', default=['yolov5s'], help='model(s) to run, i.e. --model yolov5n yolov5s')
+    opt = parser.parse_args()
+
+    for m in opt.model:
+        models[m] = torch.hub.load("ultralytics/yolov5", m, force_reload=True, skip_validation=True)
+>>>>>>> 60ea1aff57f74d50644b9c9aa6008616af5496e1
 
     app.run(host="0.0.0.0", port=opt.port)  # debug=True causes Restarting with stat

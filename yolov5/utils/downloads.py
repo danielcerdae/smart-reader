@@ -22,13 +22,18 @@ def is_url(url, check=True):
         url = str(url)
         result = urllib.parse.urlparse(url)
         assert all([result.scheme, result.netloc])  # check if is url
+<<<<<<< HEAD
         return (
             (urllib.request.urlopen(url).getcode() == 200) if check else True
         )  # check if exists online
+=======
+        return (urllib.request.urlopen(url).getcode() == 200) if check else True  # check if exists online
+>>>>>>> 60ea1aff57f74d50644b9c9aa6008616af5496e1
     except (AssertionError, urllib.request.HTTPError):
         return False
 
 
+<<<<<<< HEAD
 def gsutil_getsize(url=""):
     # gs://bucket/file size https://cloud.google.com/storage/docs/gsutil/commands/du
     s = subprocess.check_output(f"gsutil du {url}", shell=True).decode("utf-8")
@@ -42,10 +47,26 @@ def url_getsize(url="https://ultralytics.com/images/bus.jpg"):
 
 
 def safe_download(file, url, url2=None, min_bytes=1e0, error_msg=""):
+=======
+def gsutil_getsize(url=''):
+    # gs://bucket/file size https://cloud.google.com/storage/docs/gsutil/commands/du
+    s = subprocess.check_output(f'gsutil du {url}', shell=True).decode('utf-8')
+    return eval(s.split(' ')[0]) if len(s) else 0  # bytes
+
+
+def url_getsize(url='https://ultralytics.com/images/bus.jpg'):
+    # Return downloadable file size in bytes
+    response = requests.head(url, allow_redirects=True)
+    return int(response.headers.get('content-length', -1))
+
+
+def safe_download(file, url, url2=None, min_bytes=1E0, error_msg=''):
+>>>>>>> 60ea1aff57f74d50644b9c9aa6008616af5496e1
     # Attempts to download file from url or url2, checks and removes incomplete downloads < min_bytes
     from utils.general import LOGGER
 
     file = Path(file)
+<<<<<<< HEAD
     assert_msg = (
         f"Downloaded file '{file}' does not exist or size is < min_bytes={min_bytes}"
     )
@@ -54,19 +75,31 @@ def safe_download(file, url, url2=None, min_bytes=1e0, error_msg=""):
         torch.hub.download_url_to_file(
             url, str(file), progress=LOGGER.level <= logging.INFO
         )
+=======
+    assert_msg = f"Downloaded file '{file}' does not exist or size is < min_bytes={min_bytes}"
+    try:  # url1
+        LOGGER.info(f'Downloading {url} to {file}...')
+        torch.hub.download_url_to_file(url, str(file), progress=LOGGER.level <= logging.INFO)
+>>>>>>> 60ea1aff57f74d50644b9c9aa6008616af5496e1
         assert file.exists() and file.stat().st_size > min_bytes, assert_msg  # check
     except Exception as e:  # url2
         if file.exists():
             file.unlink()  # remove partial downloads
+<<<<<<< HEAD
         LOGGER.info(f"ERROR: {e}\nRe-attempting {url2 or url} to {file}...")
         os.system(
             f"curl -# -L '{url2 or url}' -o '{file}' --retry 3 -C -"
         )  # curl download, retry and resume on fail
+=======
+        LOGGER.info(f'ERROR: {e}\nRe-attempting {url2 or url} to {file}...')
+        os.system(f"curl -# -L '{url2 or url}' -o '{file}' --retry 3 -C -")  # curl download, retry and resume on fail
+>>>>>>> 60ea1aff57f74d50644b9c9aa6008616af5496e1
     finally:
         if not file.exists() or file.stat().st_size < min_bytes:  # check
             if file.exists():
                 file.unlink()  # remove partial downloads
             LOGGER.info(f"ERROR: {assert_msg}\n{error_msg}")
+<<<<<<< HEAD
         LOGGER.info("")
 
 
@@ -106,6 +139,37 @@ def attempt_download(file, repo="ultralytics/yolov5", release="v6.2"):
             for size in "nsmlx"
             for suffix in ("", "6", "-cls", "-seg")
         ]  # default
+=======
+        LOGGER.info('')
+
+
+def attempt_download(file, repo='ultralytics/yolov5', release='v6.2'):
+    # Attempt file download from GitHub release assets if not found locally. release = 'latest', 'v6.2', etc.
+    from utils.general import LOGGER
+
+    def github_assets(repository, version='latest'):
+        # Return GitHub repo tag (i.e. 'v6.2') and assets (i.e. ['yolov5s.pt', 'yolov5m.pt', ...])
+        if version != 'latest':
+            version = f'tags/{version}'  # i.e. tags/v6.2
+        response = requests.get(f'https://api.github.com/repos/{repository}/releases/{version}').json()  # github api
+        return response['tag_name'], [x['name'] for x in response['assets']]  # tag, assets
+
+    file = Path(str(file).strip().replace("'", ''))
+    if not file.exists():
+        # URL specified
+        name = Path(urllib.parse.unquote(str(file))).name  # decode '%2F' to '/' etc.
+        if str(file).startswith(('http:/', 'https:/')):  # download
+            url = str(file).replace(':/', '://')  # Pathlib turns :// -> :/
+            file = name.split('?')[0]  # parse authentication https://url.com/file.txt?auth...
+            if Path(file).is_file():
+                LOGGER.info(f'Found {url} locally at {file}')  # file already exists
+            else:
+                safe_download(file=file, url=url, min_bytes=1E5)
+            return file
+
+        # GitHub assets
+        assets = [f'yolov5{size}{suffix}.pt' for size in 'nsmlx' for suffix in ('', '6', '-cls', '-seg')]  # default
+>>>>>>> 60ea1aff57f74d50644b9c9aa6008616af5496e1
         try:
             tag, assets = github_assets(repo, release)
         except Exception:
@@ -113,6 +177,7 @@ def attempt_download(file, repo="ultralytics/yolov5", release="v6.2"):
                 tag, assets = github_assets(repo)  # latest release
             except Exception:
                 try:
+<<<<<<< HEAD
                     tag = (
                         subprocess.check_output(
                             "git tag", shell=True, stderr=subprocess.STDOUT
@@ -120,11 +185,15 @@ def attempt_download(file, repo="ultralytics/yolov5", release="v6.2"):
                         .decode()
                         .split()[-1]
                     )
+=======
+                    tag = subprocess.check_output('git tag', shell=True, stderr=subprocess.STDOUT).decode().split()[-1]
+>>>>>>> 60ea1aff57f74d50644b9c9aa6008616af5496e1
                 except Exception:
                     tag = release
 
         file.parent.mkdir(parents=True, exist_ok=True)  # make parent dir (if required)
         if name in assets:
+<<<<<<< HEAD
             url3 = "https://drive.google.com/drive/folders/1EFQTEUeXWSFww0luse2jB9M1QNZQGwNl"  # backup gdrive mirror
             safe_download(
                 file,
@@ -132,10 +201,19 @@ def attempt_download(file, repo="ultralytics/yolov5", release="v6.2"):
                 min_bytes=1e5,
                 error_msg=f"{file} missing, try downloading from https://github.com/{repo}/releases/{tag} or {url3}",
             )
+=======
+            url3 = 'https://drive.google.com/drive/folders/1EFQTEUeXWSFww0luse2jB9M1QNZQGwNl'  # backup gdrive mirror
+            safe_download(
+                file,
+                url=f'https://github.com/{repo}/releases/download/{tag}/{name}',
+                min_bytes=1E5,
+                error_msg=f'{file} missing, try downloading from https://github.com/{repo}/releases/{tag} or {url3}')
+>>>>>>> 60ea1aff57f74d50644b9c9aa6008616af5496e1
 
     return str(file)
 
 
+<<<<<<< HEAD
 def gdrive_download(id="16TiPfZj7htmTyhntwcZyEEAejOUxuT6m", file="tmp.zip"):
     # Downloads a file from Google Drive. from yolov5.utils.downloads import *; gdrive_download()
     t = time.time()
@@ -145,6 +223,14 @@ def gdrive_download(id="16TiPfZj7htmTyhntwcZyEEAejOUxuT6m", file="tmp.zip"):
         f"Downloading https://drive.google.com/uc?export=download&id={id} as {file}... ",
         end="",
     )
+=======
+def gdrive_download(id='16TiPfZj7htmTyhntwcZyEEAejOUxuT6m', file='tmp.zip'):
+    # Downloads a file from Google Drive. from yolov5.utils.downloads import *; gdrive_download()
+    t = time.time()
+    file = Path(file)
+    cookie = Path('cookie')  # gdrive cookie
+    print(f'Downloading https://drive.google.com/uc?export=download&id={id} as {file}... ', end='')
+>>>>>>> 60ea1aff57f74d50644b9c9aa6008616af5496e1
     if file.exists():
         file.unlink()  # remove existing file
     if cookie.exists():
@@ -152,10 +238,15 @@ def gdrive_download(id="16TiPfZj7htmTyhntwcZyEEAejOUxuT6m", file="tmp.zip"):
 
     # Attempt file download
     out = "NUL" if platform.system() == "Windows" else "/dev/null"
+<<<<<<< HEAD
     os.system(
         f'curl -c ./cookie -s -L "drive.google.com/uc?export=download&id={id}" > {out}'
     )
     if os.path.exists("cookie"):  # large file
+=======
+    os.system(f'curl -c ./cookie -s -L "drive.google.com/uc?export=download&id={id}" > {out}')
+    if os.path.exists('cookie'):  # large file
+>>>>>>> 60ea1aff57f74d50644b9c9aa6008616af5496e1
         s = f'curl -Lb ./cookie "drive.google.com/uc?export=download&confirm={get_token()}&id={id}" -o {file}'
     else:  # small file
         s = f'curl -s -L -o {file} "drive.google.com/uc?export=download&id={id}"'
@@ -167,6 +258,7 @@ def gdrive_download(id="16TiPfZj7htmTyhntwcZyEEAejOUxuT6m", file="tmp.zip"):
     if r != 0:
         if file.exists():
             file.unlink()  # remove partial
+<<<<<<< HEAD
         print("Download error ")  # raise Exception('Download error')
         return r
 
@@ -177,6 +269,18 @@ def gdrive_download(id="16TiPfZj7htmTyhntwcZyEEAejOUxuT6m", file="tmp.zip"):
         file.unlink()  # remove zip
 
     print(f"Done ({time.time() - t:.1f}s)")
+=======
+        print('Download error ')  # raise Exception('Download error')
+        return r
+
+    # Unzip if archive
+    if file.suffix == '.zip':
+        print('unzipping... ', end='')
+        ZipFile(file).extractall(path=file.parent)  # unzip
+        file.unlink()  # remove zip
+
+    print(f'Done ({time.time() - t:.1f}s)')
+>>>>>>> 60ea1aff57f74d50644b9c9aa6008616af5496e1
     return r
 
 
