@@ -13,13 +13,9 @@ logger = logging.getLogger(__name__)
 
 COMET_PREFIX = "comet://"
 COMET_MODEL_NAME = os.getenv("COMET_MODEL_NAME", "yolov5")
-<<<<<<< HEAD
 COMET_DEFAULT_CHECKPOINT_FILENAME = os.getenv(
     "COMET_DEFAULT_CHECKPOINT_FILENAME", "last.pt"
 )
-=======
-COMET_DEFAULT_CHECKPOINT_FILENAME = os.getenv("COMET_DEFAULT_CHECKPOINT_FILENAME", "last.pt")
->>>>>>> 60ea1aff57f74d50644b9c9aa6008616af5496e1
 
 
 def download_model_checkpoint(opt, experiment):
@@ -38,13 +34,9 @@ def download_model_checkpoint(opt, experiment):
         key=lambda x: x["step"],
         reverse=True,
     )
-<<<<<<< HEAD
     logged_checkpoint_map = {
         asset["fileName"]: asset["assetId"] for asset in model_asset_list
     }
-=======
-    logged_checkpoint_map = {asset["fileName"]: asset["assetId"] for asset in model_asset_list}
->>>>>>> 60ea1aff57f74d50644b9c9aa6008616af5496e1
 
     resource_url = urlparse(opt.weights)
     checkpoint_filename = resource_url.query
@@ -56,26 +48,18 @@ def download_model_checkpoint(opt, experiment):
         checkpoint_filename = COMET_DEFAULT_CHECKPOINT_FILENAME
 
     if asset_id is None:
-<<<<<<< HEAD
         logger.error(
             f"COMET ERROR: Checkpoint {checkpoint_filename} not found in the given Experiment"
         )
-=======
-        logger.error(f"COMET ERROR: Checkpoint {checkpoint_filename} not found in the given Experiment")
->>>>>>> 60ea1aff57f74d50644b9c9aa6008616af5496e1
         return
 
     try:
         logger.info(f"COMET INFO: Downloading checkpoint {checkpoint_filename}")
         asset_filename = checkpoint_filename
 
-<<<<<<< HEAD
         model_binary = experiment.get_asset(
             asset_id, return_type="binary", stream=False
         )
-=======
-        model_binary = experiment.get_asset(asset_id, return_type="binary", stream=False)
->>>>>>> 60ea1aff57f74d50644b9c9aa6008616af5496e1
         model_download_path = f"{model_dir}/{asset_filename}"
         with open(model_download_path, "wb") as f:
             f.write(model_binary)
@@ -101,13 +85,9 @@ def set_opt_parameters(opt, experiment):
     for asset in asset_list:
         if asset["fileName"] == "opt.yaml":
             asset_id = asset["assetId"]
-<<<<<<< HEAD
             asset_binary = experiment.get_asset(
                 asset_id, return_type="binary", stream=False
             )
-=======
-            asset_binary = experiment.get_asset(asset_id, return_type="binary", stream=False)
->>>>>>> 60ea1aff57f74d50644b9c9aa6008616af5496e1
             opt_dict = yaml.safe_load(asset_binary)
             for key, value in opt_dict.items():
                 setattr(opt, key, value)

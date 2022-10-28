@@ -13,7 +13,6 @@ Usage:
 import torch
 
 
-<<<<<<< HEAD
 def _create(
     name,
     pretrained=True,
@@ -23,9 +22,6 @@ def _create(
     verbose=True,
     device=None,
 ):
-=======
-def _create(name, pretrained=True, channels=3, classes=80, autoshape=True, verbose=True, device=None):
->>>>>>> 60ea1aff57f74d50644b9c9aa6008616af5496e1
     """Creates or loads a YOLOv5 model
 
     Arguments:
@@ -51,22 +47,15 @@ def _create(name, pretrained=True, channels=3, classes=80, autoshape=True, verbo
 
     if not verbose:
         LOGGER.setLevel(logging.WARNING)
-<<<<<<< HEAD
     check_requirements(exclude=("ipython", "opencv-python", "tensorboard", "thop"))
     name = Path(name)
     path = (
         name.with_suffix(".pt") if name.suffix == "" and not name.is_dir() else name
     )  # checkpoint path
-=======
-    check_requirements(exclude=('ipython', 'opencv-python', 'tensorboard', 'thop'))
-    name = Path(name)
-    path = name.with_suffix('.pt') if name.suffix == '' and not name.is_dir() else name  # checkpoint path
->>>>>>> 60ea1aff57f74d50644b9c9aa6008616af5496e1
     try:
         device = select_device(device)
         if pretrained and channels == 3 and classes == 80:
             try:
-<<<<<<< HEAD
                 model = DetectMultiBackend(
                     path, device=device, fuse=autoshape
                 )  # detection model
@@ -103,55 +92,21 @@ def _create(name, pretrained=True, channels=3, classes=80, autoshape=True, verbo
                 model.load_state_dict(csd, strict=False)  # load
                 if len(ckpt["model"].names) == classes:
                     model.names = ckpt["model"].names  # set class names attribute
-=======
-                model = DetectMultiBackend(path, device=device, fuse=autoshape)  # detection model
-                if autoshape:
-                    if model.pt and isinstance(model.model, ClassificationModel):
-                        LOGGER.warning('WARNING ⚠️ YOLOv5 ClassificationModel is not yet AutoShape compatible. '
-                                       'You must pass torch tensors in BCHW to this model, i.e. shape(1,3,224,224).')
-                    elif model.pt and isinstance(model.model, SegmentationModel):
-                        LOGGER.warning('WARNING ⚠️ YOLOv5 SegmentationModel is not yet AutoShape compatible. '
-                                       'You will not be able to run inference with this model.')
-                    else:
-                        model = AutoShape(model)  # for file/URI/PIL/cv2/np inputs and NMS
-            except Exception:
-                model = attempt_load(path, device=device, fuse=False)  # arbitrary model
-        else:
-            cfg = list((Path(__file__).parent / 'models').rglob(f'{path.stem}.yaml'))[0]  # model.yaml path
-            model = DetectionModel(cfg, channels, classes)  # create model
-            if pretrained:
-                ckpt = torch.load(attempt_download(path), map_location=device)  # load
-                csd = ckpt['model'].float().state_dict()  # checkpoint state_dict as FP32
-                csd = intersect_dicts(csd, model.state_dict(), exclude=['anchors'])  # intersect
-                model.load_state_dict(csd, strict=False)  # load
-                if len(ckpt['model'].names) == classes:
-                    model.names = ckpt['model'].names  # set class names attribute
->>>>>>> 60ea1aff57f74d50644b9c9aa6008616af5496e1
         if not verbose:
             LOGGER.setLevel(logging.INFO)  # reset to default
         return model.to(device)
 
     except Exception as e:
-<<<<<<< HEAD
         help_url = "https://github.com/ultralytics/yolov5/issues/36"
         s = f"{e}. Cache may be out of date, try `force_reload=True` or see {help_url} for help."
         raise Exception(s) from e
 
 
 def custom(path="path/to/model.pt", autoshape=True, _verbose=True, device=None):
-=======
-        help_url = 'https://github.com/ultralytics/yolov5/issues/36'
-        s = f'{e}. Cache may be out of date, try `force_reload=True` or see {help_url} for help.'
-        raise Exception(s) from e
-
-
-def custom(path='path/to/model.pt', autoshape=True, _verbose=True, device=None):
->>>>>>> 60ea1aff57f74d50644b9c9aa6008616af5496e1
     # YOLOv5 custom or local model
     return _create(path, autoshape=autoshape, verbose=_verbose, device=device)
 
 
-<<<<<<< HEAD
 def yolov5n(
     pretrained=True, channels=3, classes=80, autoshape=True, _verbose=True, device=None
 ):
@@ -243,59 +198,6 @@ def yolov5x6(
 
 
 if __name__ == "__main__":
-=======
-def yolov5n(pretrained=True, channels=3, classes=80, autoshape=True, _verbose=True, device=None):
-    # YOLOv5-nano model https://github.com/ultralytics/yolov5
-    return _create('yolov5n', pretrained, channels, classes, autoshape, _verbose, device)
-
-
-def yolov5s(pretrained=True, channels=3, classes=80, autoshape=True, _verbose=True, device=None):
-    # YOLOv5-small model https://github.com/ultralytics/yolov5
-    return _create('yolov5s', pretrained, channels, classes, autoshape, _verbose, device)
-
-
-def yolov5m(pretrained=True, channels=3, classes=80, autoshape=True, _verbose=True, device=None):
-    # YOLOv5-medium model https://github.com/ultralytics/yolov5
-    return _create('yolov5m', pretrained, channels, classes, autoshape, _verbose, device)
-
-
-def yolov5l(pretrained=True, channels=3, classes=80, autoshape=True, _verbose=True, device=None):
-    # YOLOv5-large model https://github.com/ultralytics/yolov5
-    return _create('yolov5l', pretrained, channels, classes, autoshape, _verbose, device)
-
-
-def yolov5x(pretrained=True, channels=3, classes=80, autoshape=True, _verbose=True, device=None):
-    # YOLOv5-xlarge model https://github.com/ultralytics/yolov5
-    return _create('yolov5x', pretrained, channels, classes, autoshape, _verbose, device)
-
-
-def yolov5n6(pretrained=True, channels=3, classes=80, autoshape=True, _verbose=True, device=None):
-    # YOLOv5-nano-P6 model https://github.com/ultralytics/yolov5
-    return _create('yolov5n6', pretrained, channels, classes, autoshape, _verbose, device)
-
-
-def yolov5s6(pretrained=True, channels=3, classes=80, autoshape=True, _verbose=True, device=None):
-    # YOLOv5-small-P6 model https://github.com/ultralytics/yolov5
-    return _create('yolov5s6', pretrained, channels, classes, autoshape, _verbose, device)
-
-
-def yolov5m6(pretrained=True, channels=3, classes=80, autoshape=True, _verbose=True, device=None):
-    # YOLOv5-medium-P6 model https://github.com/ultralytics/yolov5
-    return _create('yolov5m6', pretrained, channels, classes, autoshape, _verbose, device)
-
-
-def yolov5l6(pretrained=True, channels=3, classes=80, autoshape=True, _verbose=True, device=None):
-    # YOLOv5-large-P6 model https://github.com/ultralytics/yolov5
-    return _create('yolov5l6', pretrained, channels, classes, autoshape, _verbose, device)
-
-
-def yolov5x6(pretrained=True, channels=3, classes=80, autoshape=True, _verbose=True, device=None):
-    # YOLOv5-xlarge-P6 model https://github.com/ultralytics/yolov5
-    return _create('yolov5x6', pretrained, channels, classes, autoshape, _verbose, device)
-
-
-if __name__ == '__main__':
->>>>>>> 60ea1aff57f74d50644b9c9aa6008616af5496e1
     import argparse
     from pathlib import Path
 
@@ -306,16 +208,11 @@ if __name__ == '__main__':
 
     # Argparser
     parser = argparse.ArgumentParser()
-<<<<<<< HEAD
     parser.add_argument("--model", type=str, default="yolov5s", help="model name")
-=======
-    parser.add_argument('--model', type=str, default='yolov5s', help='model name')
->>>>>>> 60ea1aff57f74d50644b9c9aa6008616af5496e1
     opt = parser.parse_args()
     print_args(vars(opt))
 
     # Model
-<<<<<<< HEAD
     model = _create(
         name=opt.model,
         pretrained=True,
@@ -324,14 +221,10 @@ if __name__ == '__main__':
         autoshape=True,
         verbose=True,
     )
-=======
-    model = _create(name=opt.model, pretrained=True, channels=3, classes=80, autoshape=True, verbose=True)
->>>>>>> 60ea1aff57f74d50644b9c9aa6008616af5496e1
     # model = custom(path='path/to/model.pt')  # custom
 
     # Images
     imgs = [
-<<<<<<< HEAD
         "data/images/zidane.jpg",  # filename
         Path("data/images/zidane.jpg"),  # Path
         "https://ultralytics.com/images/zidane.jpg",  # URI
@@ -339,14 +232,6 @@ if __name__ == '__main__':
         Image.open("data/images/bus.jpg"),  # PIL
         np.zeros((320, 640, 3)),
     ]  # numpy
-=======
-        'data/images/zidane.jpg',  # filename
-        Path('data/images/zidane.jpg'),  # Path
-        'https://ultralytics.com/images/zidane.jpg',  # URI
-        cv2.imread('data/images/bus.jpg')[:, :, ::-1],  # OpenCV
-        Image.open('data/images/bus.jpg'),  # PIL
-        np.zeros((320, 640, 3))]  # numpy
->>>>>>> 60ea1aff57f74d50644b9c9aa6008616af5496e1
 
     # Inference
     results = model(imgs, size=320)  # batched inference
