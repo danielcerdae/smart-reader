@@ -7,7 +7,4 @@ raw_data/
 **/__pycache__/
 .env
 .python-version
-<<<<<<< HEAD
-smart_reader/data/yolov5l6.pt
-=======
->>>>>>> 60ea1aff57f74d50644b9c9aa6008616af5496e1
+.zsh_history
