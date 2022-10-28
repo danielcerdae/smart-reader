@@ -26,6 +26,7 @@ fastapi
 pytz
 uvicorn
 httpx
+python-multipart
 
 # utilities
 six>=1.14
