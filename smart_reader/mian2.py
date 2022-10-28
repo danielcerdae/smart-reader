@@ -14,8 +14,9 @@ app.add_middleware(
     allow_headers=["*"],  # Allows all headers
 )
 
-trained_model_path = 'data/yolov5l6.pt'
+trained_model_path = "data/yolov5l6.pt"
 model = initialize_yolov5_model(trained_model_path)
+
 
 @app.post("/upload")
 async def upload(file: UploadFile = File(...)):

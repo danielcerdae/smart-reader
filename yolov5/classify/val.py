@@ -36,7 +36,6 @@ ROOT = Path(os.path.relpath(ROOT, Path.cwd()))  # relative
 
 from models.common import DetectMultiBackend
 from utils.dataloaders import create_classification_dataloader
-<<<<<<< HEAD
 from utils.general import (
     LOGGER,
     Profile,
@@ -46,15 +45,11 @@ from utils.general import (
     increment_path,
     print_args,
 )
-=======
-from utils.general import LOGGER, Profile, check_img_size, check_requirements, colorstr, increment_path, print_args
->>>>>>> 60ea1aff57f74d50644b9c9aa6008616af5496e1
 from utils.torch_utils import select_device, smart_inference_mode
 
 
 @smart_inference_mode()
 def run(
-<<<<<<< HEAD
     data=ROOT / "../datasets/mnist",  # dataset dir
     weights=ROOT / "yolov5s-cls.pt",  # model.pt path(s)
     batch_size=128,  # batch size
@@ -64,17 +59,6 @@ def run(
     verbose=False,  # verbose output
     project=ROOT / "runs/val-cls",  # save to project/name
     name="exp",  # save to project/name
-=======
-    data=ROOT / '../datasets/mnist',  # dataset dir
-    weights=ROOT / 'yolov5s-cls.pt',  # model.pt path(s)
-    batch_size=128,  # batch size
-    imgsz=224,  # inference size (pixels)
-    device='',  # cuda device, i.e. 0 or 0,1,2,3 or cpu
-    workers=8,  # max dataloader workers (per RANK in DDP mode)
-    verbose=False,  # verbose output
-    project=ROOT / 'runs/val-cls',  # save to project/name
-    name='exp',  # save to project/name
->>>>>>> 60ea1aff57f74d50644b9c9aa6008616af5496e1
     exist_ok=False,  # existing project/name ok, do not increment
     half=False,  # use FP16 half-precision inference
     dnn=False,  # use OpenCV DNN for ONNX inference
@@ -86,7 +70,6 @@ def run(
     # Initialize/load model and set device
     training = model is not None
     if training:  # called by train.py
-<<<<<<< HEAD
         device, pt, jit, engine = (
             next(model.parameters()).device,
             True,
@@ -94,22 +77,14 @@ def run(
             False,
         )  # get model device, PyTorch model
         half &= device.type != "cpu"  # half precision only supported on CUDA
-=======
-        device, pt, jit, engine = next(model.parameters()).device, True, False, False  # get model device, PyTorch model
-        half &= device.type != 'cpu'  # half precision only supported on CUDA
->>>>>>> 60ea1aff57f74d50644b9c9aa6008616af5496e1
         model.half() if half else model.float()
     else:  # called directly
         device = select_device(device, batch_size=batch_size)
 
         # Directories
-<<<<<<< HEAD
         save_dir = increment_path(
             Path(project) / name, exist_ok=exist_ok
         )  # increment run
-=======
-        save_dir = increment_path(Path(project) / name, exist_ok=exist_ok)  # increment run
->>>>>>> 60ea1aff57f74d50644b9c9aa6008616af5496e1
         save_dir.mkdir(parents=True, exist_ok=True)  # make dir
 
         # Load model
@@ -123,7 +98,6 @@ def run(
             device = model.device
             if not (pt or jit):
                 batch_size = 1  # export.py models default to batch-size 1
-<<<<<<< HEAD
                 LOGGER.info(
                     f"Forcing --batch-size 1 square inference (1,3,{imgsz},{imgsz}) for non-PyTorch models"
                 )
@@ -141,24 +115,10 @@ def run(
             rank=-1,
             workers=workers,
         )
-=======
-                LOGGER.info(f'Forcing --batch-size 1 square inference (1,3,{imgsz},{imgsz}) for non-PyTorch models')
-
-        # Dataloader
-        data = Path(data)
-        test_dir = data / 'test' if (data / 'test').exists() else data / 'val'  # data/test or data/val
-        dataloader = create_classification_dataloader(path=test_dir,
-                                                      imgsz=imgsz,
-                                                      batch_size=batch_size,
-                                                      augment=False,
-                                                      rank=-1,
-                                                      workers=workers)
->>>>>>> 60ea1aff57f74d50644b9c9aa6008616af5496e1
 
     model.eval()
     pred, targets, loss, dt = [], [], 0, (Profile(), Profile(), Profile())
     n = len(dataloader)  # number of batches
-<<<<<<< HEAD
     action = "validating" if dataloader.dataset.root.stem == "val" else "testing"
     desc = f"{pbar.desc[:-36]}{action:>36}" if pbar else f"{action}"
     bar = tqdm(
@@ -170,12 +130,6 @@ def run(
         position=0,
     )
     with torch.cuda.amp.autocast(enabled=device.type != "cpu"):
-=======
-    action = 'validating' if dataloader.dataset.root.stem == 'val' else 'testing'
-    desc = f"{pbar.desc[:-36]}{action:>36}" if pbar else f"{action}"
-    bar = tqdm(dataloader, desc, n, not training, bar_format='{l_bar}{bar:10}{r_bar}{bar:-10b}', position=0)
-    with torch.cuda.amp.autocast(enabled=device.type != 'cpu'):
->>>>>>> 60ea1aff57f74d50644b9c9aa6008616af5496e1
         for images, labels in bar:
             with dt[0]:
                 images, labels = images.to(device, non_blocking=True), labels.to(device)
@@ -192,13 +146,9 @@ def run(
     loss /= n
     pred, targets = torch.cat(pred), torch.cat(targets)
     correct = (targets[:, None] == pred).float()
-<<<<<<< HEAD
     acc = torch.stack(
         (correct[:, 0], correct.max(1).values), dim=1
     )  # (top1, top5) accuracy
-=======
-    acc = torch.stack((correct[:, 0], correct.max(1).values), dim=1)  # (top1, top5) accuracy
->>>>>>> 60ea1aff57f74d50644b9c9aa6008616af5496e1
     top1, top5 = acc.mean(0).tolist()
 
     if pbar:
@@ -212,7 +162,6 @@ def run(
             LOGGER.info(f"{c:>24}{aci.shape[0]:>12}{top1i:>12.3g}{top5i:>12.3g}")
 
         # Print results
-<<<<<<< HEAD
         t = tuple(
             x.t / len(dataloader.dataset.samples) * 1e3 for x in dt
         )  # speeds per image
@@ -221,11 +170,6 @@ def run(
             f"Speed: %.1fms pre-process, %.1fms inference, %.1fms post-process per image at shape {shape}"
             % t
         )
-=======
-        t = tuple(x.t / len(dataloader.dataset.samples) * 1E3 for x in dt)  # speeds per image
-        shape = (1, 3, imgsz, imgsz)
-        LOGGER.info(f'Speed: %.1fms pre-process, %.1fms inference, %.1fms post-process per image at shape {shape}' % t)
->>>>>>> 60ea1aff57f74d50644b9c9aa6008616af5496e1
         LOGGER.info(f"Results saved to {colorstr('bold', save_dir)}")
 
     return top1, top5, loss
@@ -233,7 +177,6 @@ def run(
 
 def parse_opt():
     parser = argparse.ArgumentParser()
-<<<<<<< HEAD
     parser.add_argument(
         "--data", type=str, default=ROOT / "../datasets/mnist", help="dataset path"
     )
@@ -280,31 +223,13 @@ def parse_opt():
     parser.add_argument(
         "--dnn", action="store_true", help="use OpenCV DNN for ONNX inference"
     )
-=======
-    parser.add_argument('--data', type=str, default=ROOT / '../datasets/mnist', help='dataset path')
-    parser.add_argument('--weights', nargs='+', type=str, default=ROOT / 'yolov5s-cls.pt', help='model.pt path(s)')
-    parser.add_argument('--batch-size', type=int, default=128, help='batch size')
-    parser.add_argument('--imgsz', '--img', '--img-size', type=int, default=224, help='inference size (pixels)')
-    parser.add_argument('--device', default='', help='cuda device, i.e. 0 or 0,1,2,3 or cpu')
-    parser.add_argument('--workers', type=int, default=8, help='max dataloader workers (per RANK in DDP mode)')
-    parser.add_argument('--verbose', nargs='?', const=True, default=True, help='verbose output')
-    parser.add_argument('--project', default=ROOT / 'runs/val-cls', help='save to project/name')
-    parser.add_argument('--name', default='exp', help='save to project/name')
-    parser.add_argument('--exist-ok', action='store_true', help='existing project/name ok, do not increment')
-    parser.add_argument('--half', action='store_true', help='use FP16 half-precision inference')
-    parser.add_argument('--dnn', action='store_true', help='use OpenCV DNN for ONNX inference')
->>>>>>> 60ea1aff57f74d50644b9c9aa6008616af5496e1
     opt = parser.parse_args()
     print_args(vars(opt))
     return opt
 
 
 def main(opt):
-<<<<<<< HEAD
     check_requirements(exclude=("tensorboard", "thop"))
-=======
-    check_requirements(exclude=('tensorboard', 'thop'))
->>>>>>> 60ea1aff57f74d50644b9c9aa6008616af5496e1
     run(**vars(opt))
 
 

@@ -14,13 +14,9 @@ from ..plots import Annotator, colors
 
 
 @threaded
-<<<<<<< HEAD
 def plot_images_and_masks(
     images, targets, masks, paths=None, fname="images.jpg", names=None
 ):
-=======
-def plot_images_and_masks(images, targets, masks, paths=None, fname='images.jpg', names=None):
->>>>>>> 60ea1aff57f74d50644b9c9aa6008616af5496e1
     # Plot image grid with labels
     if isinstance(images, torch.Tensor):
         images = images.cpu().float().numpy()
@@ -33,11 +29,7 @@ def plot_images_and_masks(images, targets, masks, paths=None, fname='images.jpg'
     max_subplots = 16  # max image subplots, i.e. 4x4
     bs, _, h, w = images.shape  # batch size, _, height, width
     bs = min(bs, max_subplots)  # limit plot images
-<<<<<<< HEAD
     ns = np.ceil(bs**0.5)  # number of subplots (square)
-=======
-    ns = np.ceil(bs ** 0.5)  # number of subplots (square)
->>>>>>> 60ea1aff57f74d50644b9c9aa6008616af5496e1
     if np.max(images[0]) <= 1:
         images *= 255  # de-normalise (optional)
 
@@ -48,11 +40,7 @@ def plot_images_and_masks(images, targets, masks, paths=None, fname='images.jpg'
             break
         x, y = int(w * (i // ns)), int(h * (i % ns))  # block origin
         im = im.transpose(1, 2, 0)
-<<<<<<< HEAD
         mosaic[y : y + h, x : x + w, :] = im
-=======
-        mosaic[y:y + h, x:x + w, :] = im
->>>>>>> 60ea1aff57f74d50644b9c9aa6008616af5496e1
 
     # Resize (optional)
     scale = max_size / ns / max(h, w)
@@ -63,7 +51,6 @@ def plot_images_and_masks(images, targets, masks, paths=None, fname='images.jpg'
 
     # Annotate
     fs = int((h + w) * ns * 0.01)  # font size
-<<<<<<< HEAD
     annotator = Annotator(
         mosaic, line_width=round(fs / 10), font_size=fs, pil=True, example=names
     )
@@ -78,30 +65,16 @@ def plot_images_and_masks(images, targets, masks, paths=None, fname='images.jpg'
                 text=Path(paths[i]).name[:40],
                 txt_color=(220, 220, 220),
             )  # filenames
-=======
-    annotator = Annotator(mosaic, line_width=round(fs / 10), font_size=fs, pil=True, example=names)
-    for i in range(i + 1):
-        x, y = int(w * (i // ns)), int(h * (i % ns))  # block origin
-        annotator.rectangle([x, y, x + w, y + h], None, (255, 255, 255), width=2)  # borders
-        if paths:
-            annotator.text((x + 5, y + 5 + h), text=Path(paths[i]).name[:40], txt_color=(220, 220, 220))  # filenames
->>>>>>> 60ea1aff57f74d50644b9c9aa6008616af5496e1
         if len(targets) > 0:
             idx = targets[:, 0] == i
             ti = targets[idx]  # image targets
 
             boxes = xywh2xyxy(ti[:, 2:6]).T
-<<<<<<< HEAD
             classes = ti[:, 1].astype("int")
             labels = ti.shape[1] == 6  # labels if no conf column
             conf = (
                 None if labels else ti[:, 6]
             )  # check for confidence presence (label vs pred)
-=======
-            classes = ti[:, 1].astype('int')
-            labels = ti.shape[1] == 6  # labels if no conf column
-            conf = None if labels else ti[:, 6]  # check for confidence presence (label vs pred)
->>>>>>> 60ea1aff57f74d50644b9c9aa6008616af5496e1
 
             if boxes.shape[1]:
                 if boxes.max() <= 1.01:  # if normalized with tolerance 0.01
@@ -116,11 +89,7 @@ def plot_images_and_masks(images, targets, masks, paths=None, fname='images.jpg'
                 color = colors(cls)
                 cls = names[cls] if names else cls
                 if labels or conf[j] > 0.25:  # 0.25 conf thresh
-<<<<<<< HEAD
                     label = f"{cls}" if labels else f"{cls} {conf[j]:.1f}"
-=======
-                    label = f'{cls}' if labels else f'{cls} {conf[j]:.1f}'
->>>>>>> 60ea1aff57f74d50644b9c9aa6008616af5496e1
                     annotator.box_label(box, label, color=color)
 
             # Plot masks
@@ -146,14 +115,10 @@ def plot_images_and_masks(images, targets, masks, paths=None, fname='images.jpg'
                         else:
                             mask = image_masks[j].astype(bool)
                         with contextlib.suppress(Exception):
-<<<<<<< HEAD
                             im[y : y + h, x : x + w, :][mask] = (
                                 im[y : y + h, x : x + w, :][mask] * 0.4
                                 + np.array(color) * 0.6
                             )
-=======
-                            im[y:y + h, x:x + w, :][mask] = im[y:y + h, x:x + w, :][mask] * 0.4 + np.array(color) * 0.6
->>>>>>> 60ea1aff57f74d50644b9c9aa6008616af5496e1
                 annotator.fromarray(im)
     annotator.im.save(fname)  # save
 
@@ -164,7 +129,6 @@ def plot_results_with_masks(file="path/to/results.csv", dir="", best=True):
     fig, ax = plt.subplots(2, 8, figsize=(18, 6), tight_layout=True)
     ax = ax.ravel()
     files = list(save_dir.glob("results*.csv"))
-<<<<<<< HEAD
     assert len(
         files
     ), f"No results.csv files found in {save_dir.resolve()}, nothing to plot."
@@ -182,23 +146,11 @@ def plot_results_with_masks(file="path/to/results.csv", dir="", best=True):
             for i, j in enumerate(
                 [1, 2, 3, 4, 5, 6, 9, 10, 13, 14, 15, 16, 7, 8, 11, 12]
             ):
-=======
-    assert len(files), f"No results.csv files found in {save_dir.resolve()}, nothing to plot."
-    for f in files:
-        try:
-            data = pd.read_csv(f)
-            index = np.argmax(0.9 * data.values[:, 8] + 0.1 * data.values[:, 7] + 0.9 * data.values[:, 12] +
-                              0.1 * data.values[:, 11])
-            s = [x.strip() for x in data.columns]
-            x = data.values[:, 0]
-            for i, j in enumerate([1, 2, 3, 4, 5, 6, 9, 10, 13, 14, 15, 16, 7, 8, 11, 12]):
->>>>>>> 60ea1aff57f74d50644b9c9aa6008616af5496e1
                 y = data.values[:, j]
                 # y[y == 0] = np.nan  # don't show zero values
                 ax[i].plot(x, y, marker=".", label=f.stem, linewidth=2, markersize=2)
                 if best:
                     # best
-<<<<<<< HEAD
                     ax[i].scatter(
                         index,
                         y[index],
@@ -213,13 +165,6 @@ def plot_results_with_masks(file="path/to/results.csv", dir="", best=True):
                     ax[i].scatter(
                         x[-1], y[-1], color="r", label="last", marker="*", linewidth=3
                     )
-=======
-                    ax[i].scatter(index, y[index], color="r", label=f"best:{index}", marker="*", linewidth=3)
-                    ax[i].set_title(s[j] + f"\n{round(y[index], 5)}")
-                else:
-                    # last
-                    ax[i].scatter(x[-1], y[-1], color="r", label="last", marker="*", linewidth=3)
->>>>>>> 60ea1aff57f74d50644b9c9aa6008616af5496e1
                     ax[i].set_title(s[j] + f"\n{round(y[-1], 5)}")
                 # if j in [8, 9, 10]:  # share train and val loss y axes
                 #     ax[i].get_shared_y_axes().join(ax[i], ax[i - 5])

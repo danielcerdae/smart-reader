@@ -22,7 +22,6 @@ def mixup(im, labels, segments, im2, labels2, segments2):
     return im, labels, segments
 
 
-<<<<<<< HEAD
 def random_perspective(
     im,
     targets=(),
@@ -34,17 +33,6 @@ def random_perspective(
     perspective=0.0,
     border=(0, 0),
 ):
-=======
-def random_perspective(im,
-                       targets=(),
-                       segments=(),
-                       degrees=10,
-                       translate=.1,
-                       scale=.1,
-                       shear=10,
-                       perspective=0.0,
-                       border=(0, 0)):
->>>>>>> 60ea1aff57f74d50644b9c9aa6008616af5496e1
     # torchvision.transforms.RandomAffine(degrees=(-10, 10), translate=(.1, .1), scale=(.9, 1.1), shear=(-10, 10))
     # targets = [cls, xyxy]
 
@@ -76,23 +64,17 @@ def random_perspective(im,
 
     # Translation
     T = np.eye(3)
-<<<<<<< HEAD
     T[0, 2] = (
         random.uniform(0.5 - translate, 0.5 + translate) * width
     )  # x translation (pixels)
     T[1, 2] = (
         random.uniform(0.5 - translate, 0.5 + translate) * height
     )  # y translation (pixels)
-=======
-    T[0, 2] = (random.uniform(0.5 - translate, 0.5 + translate) * width)  # x translation (pixels)
-    T[1, 2] = (random.uniform(0.5 - translate, 0.5 + translate) * height)  # y translation (pixels)
->>>>>>> 60ea1aff57f74d50644b9c9aa6008616af5496e1
 
     # Combined rotation matrix
     M = T @ S @ R @ P @ C  # order of operations (right to left) is IMPORTANT
     if (border[0] != 0) or (border[1] != 0) or (M != np.eye(3)).any():  # image changed
         if perspective:
-<<<<<<< HEAD
             im = cv2.warpPerspective(
                 im, M, dsize=(width, height), borderValue=(114, 114, 114)
             )
@@ -100,11 +82,6 @@ def random_perspective(im,
             im = cv2.warpAffine(
                 im, M[:2], dsize=(width, height), borderValue=(114, 114, 114)
             )
-=======
-            im = cv2.warpPerspective(im, M, dsize=(width, height), borderValue=(114, 114, 114))
-        else:  # affine
-            im = cv2.warpAffine(im, M[:2], dsize=(width, height), borderValue=(114, 114, 114))
->>>>>>> 60ea1aff57f74d50644b9c9aa6008616af5496e1
 
     # Visualize
     # import matplotlib.pyplot as plt
@@ -122,13 +99,9 @@ def random_perspective(im,
             xy = np.ones((len(segment), 3))
             xy[:, :2] = segment
             xy = xy @ M.T  # transform
-<<<<<<< HEAD
             xy = (
                 xy[:, :2] / xy[:, 2:3] if perspective else xy[:, :2]
             )  # perspective rescale or affine
-=======
-            xy = (xy[:, :2] / xy[:, 2:3] if perspective else xy[:, :2])  # perspective rescale or affine
->>>>>>> 60ea1aff57f74d50644b9c9aa6008616af5496e1
 
             # clip
             new[i] = segment2box(xy, width, height)
