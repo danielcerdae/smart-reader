@@ -7,3 +7,4 @@ raw_data/
 **/__pycache__/
 .env
 .python-version
+smart_reader/data/yolov5l6.pt
