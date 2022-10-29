@@ -4,7 +4,7 @@ from sahi.predict import get_prediction, get_sliced_prediction
 
 class PredictionModel:
     trained_model_path = "model/yolov5l6.pt"
-    downloads_path = "smart_reader/downloads"
+    downloads_path = "smart_reader/converted"
     predictions_path = "smart_reader/predictions"
 
     def __init__(

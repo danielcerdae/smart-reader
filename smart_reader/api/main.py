@@ -3,6 +3,9 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi import File, UploadFile
 from fastapi.responses import FileResponse
 from smart_reader.logic import PredictionModel
+from pdf2image import convert_from_path
+from PIL import Image
+
 
 app = FastAPI()
 
@@ -16,9 +19,9 @@ app.add_middleware(
 
 model = PredictionModel()
 
-
 @app.post("/upload")
 async def upload_endpoint(file: UploadFile = File(...)) -> dict:
+
     try:
         contents = file.file.read()
         with open(f"smart_reader/downloads/{file.filename}", "wb") as f:
@@ -28,7 +31,14 @@ async def upload_endpoint(file: UploadFile = File(...)) -> dict:
     finally:
         file.file.close()
 
-    return {"filename": file.filename, "message": "File successfully uploaded"}
+        Image.MAX_IMAGE_PIXELS = 100000000
+        images = convert_from_path(f'smart_reader/downloads/{file.filename}', dpi=300, grayscale=True, size=(2160,None))
+        filename_no_extension = file.filename.split('.')[0]
+        filename = filename_no_extension + '.png'
+        images[0].save(f'smart_reader/converted/{filename}')
+
+    return {"filename": filename, "message": "File successfully uploaded"}
+
 
 
 @app.get("/predict")
