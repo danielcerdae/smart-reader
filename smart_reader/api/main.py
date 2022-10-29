@@ -1,37 +1,41 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-import pandas as pd
 from fastapi import File, UploadFile
-from smart_reader.funciones import initialize_yolov5_model
+
+from smart_reader.logic import PredictionModel
 
 app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Allows all origins
+    allow_origins=["*"],
     allow_credentials=True,
-    allow_methods=["*"],  # Allows all methods
-    allow_headers=["*"],  # Allows all headers
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
-trained_model_path = "data/yolov5l6.pt"
-model = initialize_yolov5_model(trained_model_path)
+model = PredictionModel()
 
 
 @app.post("/upload")
-async def upload(file: UploadFile = File(...)):
+async def upload_endpoint(file: UploadFile = File(...)) -> dict:
     try:
         contents = file.file.read()
-        with open(file.filename, "wb") as f:
+        with open(f"smart_reader/downloads/{file.filename}", "wb") as f:
             f.write(contents)
     except Exception:
         return {"message": "There was an error uploading the file"}
     finally:
         file.file.close()
 
-    return {"message": f"Successfully uploaded {file.filename}"}
+    return {"filename": file.filename, "message": "File successfully uploaded"}
 
 
-@app.post("/predict")
-async def predict_endpoint():
-    return {}
+@app.get("/predict")
+async def predict_endpoint(filename: str, slicing: bool = True) -> dict:
+    if slicing is not True:
+        prediction = model.predict(filename)
+    else:
+        prediction = model.predict_with_sahi(filename)
+
+    return {"data": prediction, "message": "File succesfully processed"}
