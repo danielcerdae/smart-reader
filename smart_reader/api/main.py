@@ -40,7 +40,10 @@ async def predict_endpoint(filename: str, slicing: bool = True) -> dict:
 
     return {"data": prediction, "message": "File succesfully processed"}
 
+
 @app.get("/processed_image")
 async def main(filename: str, filename_ending: str):
     filename_no_extension = filename.split(".")[0]
-    return FileResponse(f'smart_reader/predictions/{filename_no_extension}_{filename_ending}.png')
+    return FileResponse(
+        f"smart_reader/predictions/{filename_no_extension}_{filename_ending}.png"
+    )
