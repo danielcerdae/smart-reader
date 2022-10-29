@@ -26,13 +26,14 @@ fastapi
 pytz
 uvicorn
 httpx
-<<<<<<< HEAD
 python-multipart
-=======
->>>>>>> 60ea1aff57f74d50644b9c9aa6008616af5496e1
 
 # utilities
 six>=1.14
 joblib
 memoized-property
 termcolor
+
+sahi
+torch
+yolov5
