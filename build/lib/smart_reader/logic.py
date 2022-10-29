@@ -3,7 +3,7 @@ from sahi.predict import get_prediction, get_sliced_prediction
 
 
 class PredictionModel:
-    trained_model_path = "model/yolov5l6.pt"
+    trained_weights_path = "data/yolov5l6.pt"
     downloads_path = "smart_reader/downloads"
     predictions_path = "smart_reader/predictions"
 
@@ -11,7 +11,7 @@ class PredictionModel:
         self, confidence_threshold: float = 0.6, computing_device: str = "cpu"
     ):
         self.prediction_model = Yolov5DetectionModel(
-            model_path=self.trained_model_path,
+            model_path=self.trained_weights_path,
             confidence_threshold=confidence_threshold,
             device=computing_device,
         )
@@ -23,7 +23,7 @@ class PredictionModel:
             f"{self.downloads_path}/{filename}", self.prediction_model
         )
         prediction.export_visuals(
-            export_dir=self.predictions_path, file_name=f"{filename_no_extension}_yolo"
+            export_dir=f"{self.predictions_path}/{filename_no_extension}_yolo.png"
         )
 
         return prediction.to_coco_annotations()
@@ -42,7 +42,7 @@ class PredictionModel:
             overlap_width_ratio=overlap_ratio,
         )
         prediction_with_sahi.export_visuals(
-            export_dir=self.predictions_path, file_name=f"{filename_no_extension}_sahi"
+            export_dir=f"{self.predictions_path}/{filename_no_extension}_sahi.png"
         )
 
         return prediction_with_sahi.to_coco_annotations()

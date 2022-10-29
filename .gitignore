@@ -8,3 +8,5 @@ raw_data/
 .env
 .python-version
 .zsh_history
+.vscode
+model/

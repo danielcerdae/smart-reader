@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 import pandas as pd
 from fastapi import File, UploadFile
-from smart_reader.funciones import initialize_yolov5_model
+from smart_reader.logic import initialize_yolov5_model
 
 app = FastAPI()
 
