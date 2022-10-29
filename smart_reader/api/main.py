@@ -21,7 +21,6 @@ model = PredictionModel()
 
 @app.post("/upload")
 async def upload_endpoint(file: UploadFile = File(...)) -> dict:
-
     try:
         contents = file.file.read()
         with open(f"smart_reader/downloads/{file.filename}", "wb") as f:
@@ -42,18 +41,16 @@ async def upload_endpoint(file: UploadFile = File(...)) -> dict:
 
 
 @app.get("/predict")
-async def predict_endpoint(filename: str, slicing: bool = True) -> dict:
-    if slicing is not True:
-        prediction = model.predict(filename)
-    else:
-        prediction = model.predict_with_sahi(filename)
+async def predict_endpoint(filename: str) -> dict:
+
+    prediction = model.predict_with_sahi(filename)
 
     return {"data": prediction, "message": "File succesfully processed"}
 
 
 @app.get("/processed_image")
-async def main(filename: str, filename_ending: str):
+async def main(filename: str):
     filename_no_extension = filename.split(".")[0]
     return FileResponse(
-        f"smart_reader/predictions/{filename_no_extension}_{filename_ending}.png"
+        f"smart_reader/predictions/{filename_no_extension}.png"
     )

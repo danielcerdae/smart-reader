@@ -37,3 +37,6 @@ termcolor
 sahi==0.10.8
 torch
 yolov5
+
+pdf2image
+poppler-utils
