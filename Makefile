@@ -1,8 +1,9 @@
 # ----------------------------------
 #          INSTALL & TEST
 # ----------------------------------
-install_requirements:
-	@pip install -r requirements.txt
+
+run:
+	uvicorn smart_reader.api.main:app --reload --host 0.0.0.0
 
 check_code:
 	@flake8 scripts/* smart-reader/*.py

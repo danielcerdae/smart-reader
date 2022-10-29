@@ -21,21 +21,18 @@ model = PredictionModel()
 async def upload_endpoint(file: UploadFile = File(...)) -> dict:
     try:
         contents = file.file.read()
-        with open(f"smart_reader/downloads/{file.filename}", "wb") as f:
+        with open(file.filename, "wb") as f:
             f.write(contents)
     except Exception:
-        return {"message": "There was an error uploading the file"}
+        return {"message": "There was an error uploading the file"}, 404
     finally:
         file.file.close()
 
-    return {"filename": file.filename, "message": "File successfully uploaded"}
+    return {"filename": file.filename, "message": "File successfully uploaded"}, 201
 
 
 @app.get("/predict")
-async def predict_endpoint(filename: str, slicing: bool = True) -> dict:
-    if slicing is not True:
-        prediction = model.predict(filename)
-    else:
-        prediction = model.predict_with_sahi(filename)
-
-    return {"data": prediction, "message": "File succesfully processed"}
+async def predict_endpoint(filename: str) -> dict:
+    prediction = model.predict(filename)
+    print(prediction)
+    return {""}
