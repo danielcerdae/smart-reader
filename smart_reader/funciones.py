@@ -20,8 +20,8 @@ trained_model_path = 'data/yolov5l6.pt'
 def initialize_yolov5_model(trained_model_path, confidence_threshold:(float)=0.6, device="cuda:"):
     detection_model = Yolov5DetectionModel(
                         model_path=trained_model_path,
-                        confidence_threshold = confidence_threshold,
-                        device= device) # or 'cuda:0'
+                        confidence_threshold=confidence_threshold,
+                        device=device) # or 'cuda:0'
 
     return detection_model
 
@@ -31,9 +31,10 @@ def initialize_yolov5_model(trained_model_path, confidence_threshold:(float)=0.6
 yolov5_model = initialize_yolov5_model(trained_model_path)
 
 def predict_yolov5_model(yolov5_model):
-    result = get_prediction("directorio_donde_guarda_la_imagen", yolov5_model)
+    result = get_prediction("path_de_la_imagen", yolov5_model)
 
     return result
+
 
 
 # Visualizo las Predicciones con el modelo Yolov5l6
