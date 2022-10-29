@@ -7,23 +7,23 @@ wheel>=0.29
 # data science
 numpy
 pandas
-scikit-learn
-tensorflow
+# scikit-learn
+# tensorflow
 
 # tests/linter
 black
-coverage
-flake8
+# coverage
+# flake8
 pytest
-yapf
+# yapf
 
 # API
-gcsfs
-google-cloud-storage
-mlflow
-s3fs
+# gcsfs
+# google-cloud-storage
+# mlflow
+# s3fs
 fastapi
-pytz
+# pytz
 uvicorn
 httpx
 python-multipart
