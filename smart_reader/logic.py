@@ -42,7 +42,7 @@ class PredictionModel:
             overlap_width_ratio=overlap_ratio,
         )
         prediction_with_sahi.export_visuals(
-            export_dir=self.predictions_path, file_name=f"{filename_no_extension}_sahi"
+            export_dir=self.predictions_path, file_name=f"{filename_no_extension}"
         )
 
         return prediction_with_sahi.to_coco_annotations()
