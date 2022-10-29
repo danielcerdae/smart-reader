@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi import File, UploadFile
-
+from fastapi.responses import FileResponse
 from smart_reader.logic import PredictionModel
 
 app = FastAPI()
@@ -39,3 +39,8 @@ async def predict_endpoint(filename: str, slicing: bool = True) -> dict:
         prediction = model.predict_with_sahi(filename)
 
     return {"data": prediction, "message": "File succesfully processed"}
+
+@app.get("/processed_image")
+async def main(filename: str, filename_ending: str):
+    filename_no_extension = filename.split(".")[0]
+    return FileResponse(f'smart_reader/predictions/{filename_no_extension}_{filename_ending}.png')
