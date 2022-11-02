@@ -39,4 +39,3 @@ torch
 yolov5
 
 pdf2image
-poppler-utils

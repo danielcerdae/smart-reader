@@ -12,6 +12,6 @@ COPY setup.py setup.py
 RUN pip install --upgrade pip
 RUN pip install -r requirements.txt
 RUN apt-get update
-RUN apt-get install ffmpeg libsm6 libxext6  -y
+RUN apt-get install ffmpeg libsm6 libxext6 -y
 
 CMD uvicorn smart_reader.api.main:app --host 0.0.0.0 --port $PORT
