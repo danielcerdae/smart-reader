@@ -42,3 +42,5 @@ pdf2image
 poppler-utils==0.1.0
 scikit-image
 imagecodecs
+
+google-cloud-storage

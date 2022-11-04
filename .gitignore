@@ -10,3 +10,5 @@ raw_data/
 .zsh_history
 .vscode
 model/
+.vscode
+application-credentials.json
