@@ -1,9 +1,11 @@
 from sahi.model import Yolov5DetectionModel
 from sahi.predict import get_prediction, get_sliced_prediction
 import os
+from google.cloud import storage
+
 
 class PredictionModel:
-    trained_model_path = "model/yolov5l6new.pt"
+    trained_model_path = "model/yolov5l6.pt"
     downloads_path = "smart_reader/converted"
     predictions_path = "smart_reader/predictions"
 
@@ -48,5 +50,31 @@ class PredictionModel:
         return prediction_with_sahi.to_coco_annotations()
 
 
-def remove_file(file_path: str) -> None:
-    os.remove(file_path)
+os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "application-credentials.json"
+
+
+def upload_images(
+    bucket_name,
+    original_filename,
+    original_file_path,
+    predicted_filename,
+    predicted_file_path,
+):
+
+    try:
+        project_id = os.environ.get("GCP_PROJECT")
+
+        storage_client = storage.Client(project_id)
+        bucket = storage_client.bucket(bucket_name)
+
+        blob = bucket.blob(original_filename)
+        blob.upload_from_filename(original_file_path)
+
+        blob = bucket.blob(predicted_filename)
+        blob.upload_from_filename(predicted_file_path)
+
+    except Exception as err:
+        print(err)
+        return False
+
+    return True
