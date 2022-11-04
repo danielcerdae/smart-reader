@@ -3,7 +3,7 @@ from sahi.predict import get_prediction, get_sliced_prediction
 
 
 class PredictionModel:
-    trained_model_path = "model/yolov5l6.pt"
+    trained_model_path = "model/yolov5l6new.pt"
     downloads_path = "smart_reader/converted"
     predictions_path = "smart_reader/predictions"
 

@@ -39,3 +39,6 @@ torch
 yolov5
 
 pdf2image
+poppler-utils==0.1.0
+scikit-image
+imagecodecs

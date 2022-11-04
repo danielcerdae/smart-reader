@@ -56,7 +56,7 @@ async def main(filename: str) -> FileResponse:
 
     file = FileResponse(file_path)
 
-    if file:
-        os.remove(file_path)
+    #if file:
+    #    os.remove(file_path)
 
     return file
