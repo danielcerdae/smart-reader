@@ -3,8 +3,9 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi import File, UploadFile
 import os
 from fastapi.responses import FileResponse
-from smart_reader.logic import PredictionModel
+from smart_reader.logic import PredictionModel, remove_file
 from pdf2image import convert_from_path
+from starlette.background import BackgroundTasks
 from PIL import Image
 
 
@@ -17,6 +18,7 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
 
 
 model = PredictionModel()
@@ -50,13 +52,10 @@ async def predict_endpoint(filename: str) -> dict:
 
 
 @app.get("/processed_image")
-async def main(filename: str) -> FileResponse:
+async def main(filename: str, background_tasks: BackgroundTasks) -> FileResponse:
     filename_no_extension = filename.split(".")[0]
     file_path = f"smart_reader/predictions/{filename_no_extension}.png"
 
     file = FileResponse(file_path)
-
-    #if file:
-    #    os.remove(file_path)
-
+    background_tasks.add_task(remove_file, file_path)
     return file

@@ -1,6 +1,6 @@
 from sahi.model import Yolov5DetectionModel
 from sahi.predict import get_prediction, get_sliced_prediction
-
+import os
 
 class PredictionModel:
     trained_model_path = "model/yolov5l6new.pt"
@@ -46,3 +46,7 @@ class PredictionModel:
         )
 
         return prediction_with_sahi.to_coco_annotations()
+
+
+def remove_file(file_path: str) -> None:
+    os.remove(file_path)
