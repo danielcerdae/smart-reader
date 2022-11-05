@@ -23,9 +23,12 @@ app.state.model = PredictionModel()
 
 @app.post("/upload")
 async def upload_endpoint(file: UploadFile = File(...)) -> dict:
+    filename_no_extension = file.filename.split(".")[0]
+    filename_extension = file.filename.split(".")[1]
+
     try:
         contents = file.file.read()
-        with open(f"smart_reader/downloads/{file.filename}", "wb") as f:
+        with open(f"smart_reader/downloads/{filename_no_extension}.{filename_extension.lower()}", "wb") as f:
             f.write(contents)
     except Exception:
         return {"success": False, "message": "There was an error uploading the file"}
@@ -34,12 +37,12 @@ async def upload_endpoint(file: UploadFile = File(...)) -> dict:
 
         Image.MAX_IMAGE_PIXELS = 100000000
         images = convert_from_path(
-            f"smart_reader/downloads/{file.filename}",
+            f"smart_reader/downloads/{filename_no_extension}.{filename_extension.lower()}",
             dpi=300,
             grayscale=True,
             size=(2160, None),
         )
-        filename_no_extension = file.filename.split(".")[0]
+
         filename = filename_no_extension + ".png"
         images[0].save(f"smart_reader/converted/{filename}")
 
@@ -57,47 +60,47 @@ async def predict_endpoint(filename: str, slicing: bool, confidence_threshold: f
     else:
         prediction = app.state.model.predict(filename)
 
-    if prediction:
-        filename_no_extension = filename.split(".")[0]
 
-        custom_id = uuid1()
+    filename_no_extension = filename.split(".")[0]
 
-        original_filename = f"{custom_id}-original.png"
-        original_file_path = f"smart_reader/converted/{filename_no_extension}.png"
+    custom_id = uuid1()
 
-        predicted_filename = f"{custom_id}-predicted.png"
-        predicted_file_path = f"smart_reader/predictions/{filename_no_extension}.png"
+    original_filename = f"{custom_id}-original.png"
+    original_file_path = f"smart_reader/converted/{filename_no_extension}.png"
 
-        bucket_name = os.environ.get("GOOGLE_CLOUD_BUCKET")
+    predicted_filename = f"{custom_id}-predicted.png"
+    predicted_file_path = f"smart_reader/predictions/{filename_no_extension}.png"
 
-        was_succesful = upload_images(
-            bucket_name,
-            original_filename,
-            original_file_path,
-            predicted_filename,
-            predicted_file_path,
+    bucket_name = os.environ.get("GOOGLE_CLOUD_BUCKET")
+
+    was_succesful = upload_images(
+        bucket_name,
+        original_filename,
+        original_file_path,
+        predicted_filename,
+        predicted_file_path,
+    )
+
+    if was_succesful:
+        os.remove(f"smart_reader/downloads/{filename_no_extension}.pdf")
+        os.remove(f"smart_reader/converted/{filename_no_extension}.png")
+        os.remove(f"smart_reader/predictions/{filename_no_extension}.png")
+
+        original_image_url = (
+            f"https://storage.googleapis.com/{bucket_name}/{original_filename}"
+        )
+        predicted_image_url = (
+            f"https://storage.googleapis.com/{bucket_name}/{predicted_filename}"
         )
 
-        if was_succesful:
-            os.remove(f"smart_reader/downloads/{filename_no_extension}.pdf")
-            os.remove(f"smart_reader/converted/{filename_no_extension}.png")
-            os.remove(f"smart_reader/predictions/{filename_no_extension}.png")
-
-            original_image_url = (
-                f"https://storage.googleapis.com/{bucket_name}/{original_filename}"
-            )
-            predicted_image_url = (
-                f"https://storage.googleapis.com/{bucket_name}/{predicted_filename}"
-            )
-
-            return {
-                "success": True,
-                "message": "File succesfully processed",
-                "image_id": custom_id,
-                "original_image_url": original_image_url,
-                "predicted_image_url": predicted_image_url,
-                "data": prediction,
-            }
+        return {
+            "success": True,
+            "message": "File succesfully processed",
+            "image_id": custom_id,
+            "original_image_url": original_image_url,
+            "predicted_image_url": predicted_image_url,
+            "data": prediction,
+        }
 
     return {"success": False, "message": "There was an error"}
 
