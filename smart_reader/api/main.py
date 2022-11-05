@@ -47,8 +47,14 @@ async def upload_endpoint(file: UploadFile = File(...)) -> dict:
 
 
 @app.get("/predict")
-async def predict_endpoint(filename: str) -> dict:
-    prediction = model.predict_with_sahi(filename)
+async def predict_endpoint(filename: str, slicing: bool, confidence_threshold: float) -> dict:
+    if confidence_threshold is not 0.6:
+        model = PredictionModel(confidence_threshold=confidence_threshold)
+
+    if slicing is True:
+        prediction = model.predict_with_sahi(filename)
+    else:
+        prediction = model.predict(filename)
 
     if prediction:
         filename_no_extension = filename.split(".")[0]
