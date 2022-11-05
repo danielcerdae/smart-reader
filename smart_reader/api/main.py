@@ -18,7 +18,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-model = PredictionModel()
+app.state.model = PredictionModel()
 
 
 @app.post("/upload")
@@ -28,7 +28,7 @@ async def upload_endpoint(file: UploadFile = File(...)) -> dict:
         with open(f"smart_reader/downloads/{file.filename}", "wb") as f:
             f.write(contents)
     except Exception:
-        return {"message": "There was an error uploading the file"}
+        return {"success": False, "message": "There was an error uploading the file"}
     finally:
         file.file.close()
 
@@ -43,12 +43,19 @@ async def upload_endpoint(file: UploadFile = File(...)) -> dict:
         filename = filename_no_extension + ".png"
         images[0].save(f"smart_reader/converted/{filename}")
 
-    return {"message": "File successfully uploaded", "filename": filename}
+    return {"success": True, "message": "File successfully uploaded", "filename": filename}
 
 
 @app.get("/predict")
-async def predict_endpoint(filename: str) -> dict:
-    prediction = model.predict_with_sahi(filename)
+async def predict_endpoint(filename: str, slicing: bool, confidence_threshold: float) -> dict:
+
+    if confidence_threshold != float(0.6):
+        app.state.model = PredictionModel(confidence_threshold=confidence_threshold)
+
+    if slicing is True:
+        prediction = app.state.model.predict_with_sahi(filename)
+    else:
+        prediction = app.state.model.predict(filename)
 
     if prediction:
         filename_no_extension = filename.split(".")[0]
@@ -84,6 +91,7 @@ async def predict_endpoint(filename: str) -> dict:
             )
 
             return {
+                "success": True,
                 "message": "File succesfully processed",
                 "image_id": custom_id,
                 "original_image_url": original_image_url,
@@ -91,7 +99,7 @@ async def predict_endpoint(filename: str) -> dict:
                 "data": prediction,
             }
 
-    return {"message": "There was an error"}
+    return {"success": False, "message": "There was an error"}
 
 
 @app.middleware("http")
