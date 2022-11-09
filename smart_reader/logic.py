@@ -25,7 +25,7 @@ class PredictionModel:
             f"{self.downloads_path}/{filename}", self.prediction_model
         )
         prediction.export_visuals(
-            export_dir=self.predictions_path, file_name=f"{filename_no_extension}_yolo"
+            export_dir=self.predictions_path, file_name=f"{filename_no_extension}"
         )
 
         return prediction.to_coco_annotations()

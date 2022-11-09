@@ -7,6 +7,7 @@ COPY .env .env
 COPY smart_reader smart_reader
 COPY model model
 COPY requirements.txt requirements.txt
+COPY application-credentials.json application-credentials.json
 COPY setup.py setup.py
 
 RUN pip install --upgrade pip
