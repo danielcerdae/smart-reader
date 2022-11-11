@@ -3,7 +3,6 @@ FROM python:3.8.12-buster
 
 #WORKDIR /production
 
-COPY .env .env
 COPY smart_reader smart_reader
 COPY model model
 COPY requirements.txt requirements.txt
