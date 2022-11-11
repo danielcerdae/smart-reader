@@ -38,6 +38,8 @@ sahi==0.10.8
 torch
 yolov5
 
+direnv
+
 pdf2image
 poppler-utils==0.1.0
 scikit-image
