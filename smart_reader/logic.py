@@ -1,4 +1,4 @@
-from sahi.model import Yolov5DetectionModel
+from sahi import AutoDetectionModel
 from sahi.predict import get_prediction, get_sliced_prediction
 import os
 from google.cloud import storage
@@ -12,7 +12,8 @@ class PredictionModel:
     def __init__(
         self, confidence_threshold: float = 0.6, computing_device: str = "cpu"
     ):
-        self.prediction_model = Yolov5DetectionModel(
+        self.prediction_model = AutoDetectionModel.from_pretrained(
+            model_type="yolov5",
             model_path=self.trained_model_path,
             confidence_threshold=confidence_threshold,
             device=computing_device,
