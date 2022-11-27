@@ -34,7 +34,7 @@ joblib
 memoized-property
 termcolor
 
-sahi==0.11.4
+sahi==0.11.5
 torch
 yolov5
 direnv
